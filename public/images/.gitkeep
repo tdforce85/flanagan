@@ -1,0 +1,6 @@
+# Put site photos here:
+#   hero.jpg   → wide homepage hero background
+#   owner.jpg  → photo of the owner / truck (About page)
+#   logo.png   → square business logo
+# Before/after photos go in the gallery/ subfolder, then reference them in
+# src/lib/gallery.ts.
