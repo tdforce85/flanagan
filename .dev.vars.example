@@ -1,0 +1,13 @@
+# Copy to `.dev.vars` (gitignored) for `npx wrangler pages dev out/`.
+# In production these are set in the Cloudflare Pages dashboard instead.
+
+# Google Places API (for the reviews function) — restricted key + the business Place ID
+GOOGLE_PLACES_API_KEY=""
+PLACE_ID=""
+
+# Web3Forms access key (contact form delivery to the owner's Gmail)
+WEB3FORMS_ACCESS_KEY=""
+
+# Cloudflare Turnstile secret — ONLY needed if the optional contact-form
+# hardening (functions/api/contact.ts) is enabled.
+TURNSTILE_SECRET=""

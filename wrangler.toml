@@ -1,0 +1,11 @@
+# Cloudflare Pages config. The static export lands in `out/`; the /functions
+# directory is served as Pages Functions alongside it.
+name = "handyman-site"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+pages_build_output_dir = "out"
+
+# Production env vars (GOOGLE_PLACES_API_KEY, PLACE_ID, and — if Turnstile is
+# enabled — TURNSTILE_SECRET, WEB3FORMS_ACCESS_KEY) are set in the Cloudflare
+# Pages dashboard, NOT committed here. Local dev reads them from .dev.vars.

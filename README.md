@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Handyman Site
 
-## Getting Started
+Marketing website for a local handyman business. Next.js 15 (App Router) +
+Tailwind v4, TypeScript, **static export** deployed to **Cloudflare Pages** with
+one Cloudflare Pages Function for live Google reviews.
 
-First, run the development server:
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local     # add your Web3Forms key (see below)
+npm run dev                    # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`npm run dev` serves the static pages but **not** the `/functions` endpoints.
+To exercise the reviews function locally, use the Cloudflare runtime:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .dev.vars.example .dev.vars   # add GOOGLE_PLACES_API_KEY + PLACE_ID
+npm run build
+npx wrangler pages dev out/      # http://localhost:8788  (/api/reviews works here)
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Architecture
 
-## Learn More
+- **Static export** (`output: "export"` in `next.config.ts`) → the whole site is
+  prerendered to `out/`. No Next.js server runtime.
+- Anything needing a secret runs as a **Cloudflare Pages Function** in
+  `/functions`, served alongside the static assets. Currently:
+  `functions/api/reviews.ts` (Google reviews, keeps the API key server-side).
+- `images.unoptimized = true` because static export has no image optimizer.
 
-To learn more about Next.js, take a look at the following resources:
+## Configuration & content
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Everything owner-specific lives in **`src/lib/business.ts`** (and
+`src/lib/gallery.ts`). Replace every `PLACEHOLDER` — there's a checklist at the
+top of `business.ts`:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Business name, tagline, phone, email, hours, service areas
+- `url` (production domain — used for metadata, sitemap, schema)
+- `mapEmbedSrc` (Google Maps "Share → Embed a map" URL)
+- Services list, before/after gallery captions + image paths
 
-## Deploy on Vercel
+Add images to `public/images/`:
+- `hero.jpg` — wide hero background
+- `owner.jpg` — owner/team photo (About page)
+- `gallery/*` — before/after photos, then set `beforeSrc`/`afterSrc` in
+  `src/lib/gallery.ts`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Until photos are added, the hero shows the brand gradient and the gallery shows
+labeled before/after placeholders that still demonstrate the slider.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Secrets / keys
+
+| Key | Where | How to get it |
+| --- | --- | --- |
+| `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` | `.env.local` (build-time, public by design) | Free at [web3forms.com](https://web3forms.com) — tie it to the owner's Gmail. The contact form delivers there. |
+| `GOOGLE_PLACES_API_KEY` | `.dev.vars` locally / Cloudflare Pages env in prod | Google Cloud console → enable **Places API** → restricted key. |
+| `PLACE_ID` | same | The business's Google **Place ID** (Google's "Place ID Finder"). |
+
+The reviews function returns an empty list (and the UI shows sample reviews)
+until the Places key + Place ID are set — nothing breaks before they're set.
+
+## Deploy (Cloudflare Pages)
+
+1. Push to a Git repo and connect it in the Cloudflare Pages dashboard.
+2. Build command: `npm run build` · Build output directory: `out`.
+3. Set environment variables in the Pages project settings:
+   `GOOGLE_PLACES_API_KEY`, `PLACE_ID`, and `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`.
+4. HTTPS/SSL is provisioned automatically and free once the domain is connected.
+
+## Design
+
+Brand palette lives in `src/app/globals.css` (`@theme`): forest green
+`#1C3424`, sage `#91CA9F`, cream `#F8EAD4`, white. Headings use Manrope, body
+uses Inter (`src/app/layout.tsx`) — swap in `layout.tsx` if desired.
+
+## Optional: contact-form hardening (Turnstile)
+
+The form ships with a honeypot (`botcheck`), enough for most small sites. For
+stronger protection, add a Cloudflare Turnstile widget and verify its token in a
+`functions/api/contact.ts` relay (verify token → forward to Web3Forms), keeping
+the Turnstile secret server-side. See the note in `AGENTS.md`.
