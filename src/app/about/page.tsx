@@ -39,15 +39,15 @@ export default function AboutPage() {
             <SectionHeading
               as="h1"
               eyebrow="About us"
-              title={`Your trusted local handyman`}
-              description={`${BUSINESS.name} has spent ${BUSINESS.yearsInBusiness}+ years helping homeowners in ${BUSINESS.serviceAreas[0]} and the surrounding area keep their homes in great shape. We're the reliable, do-it-all pro your neighbors already call.`}
+              title="Built on precision"
+              description={BUSINESS.about[0]}
             />
             <TrustBadges className="mt-8" />
-            <p className="mt-6 text-ink/70">
-              Whether it&apos;s a leaky faucet, a wobbly deck board, or a whole
-              punch-list before guests arrive, we bring the tools, the know-how,
-              and the follow-through to get it done right.
-            </p>
+            <div className="mt-6 space-y-4 text-ink/70">
+              {BUSINESS.about.slice(1).map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
           </div>
 
           {/* Owner photo placeholder — drop /public/images/owner.jpg and swap in <Image>. */}

@@ -25,7 +25,7 @@ export function Hero() {
             {BUSINESS.tagline}
           </p>
           <h1 className="mt-3 text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-            Repairs, upgrades &amp; to-do lists — done right.
+            Repairs, renovations &amp; to-do lists — done right.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-white/85 sm:text-xl">
             {BUSINESS.name} is your reliable local handyman serving{" "}

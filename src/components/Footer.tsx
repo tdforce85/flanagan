@@ -56,6 +56,18 @@ export function Footer() {
               <MapPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-secondary" aria-hidden />
               <span>{BUSINESS.addressLine}</span>
             </li>
+            {BUSINESS.social.facebook && (
+              <li>
+                <a
+                  href={BUSINESS.social.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white"
+                >
+                  Facebook →
+                </a>
+              </li>
+            )}
           </ul>
         </div>
 

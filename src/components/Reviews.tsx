@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FALLBACK_REVIEWS, type Review } from "@/lib/business";
+import { BUSINESS, type Review } from "@/lib/business";
 import { StarIcon } from "@/components/icons";
 
 interface ReviewsPayload {
@@ -24,6 +24,12 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
+const googleSearchUrl =
+  BUSINESS.social.google ||
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `${BUSINESS.name} ${BUSINESS.city} ${BUSINESS.state}`,
+  )}`;
+
 export function Reviews() {
   const [data, setData] = useState<ReviewsPayload | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,8 +39,7 @@ export function Reviews() {
     fetch("/api/reviews")
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((json: ReviewsPayload) => {
-        if (active && json?.reviews?.length) setData(json);
-        else if (active) setData(null);
+        if (active) setData(json?.reviews?.length ? json : null);
       })
       .catch(() => active && setData(null))
       .finally(() => active && setLoading(false));
@@ -42,9 +47,6 @@ export function Reviews() {
       active = false;
     };
   }, []);
-
-  const reviews = data?.reviews ?? FALLBACK_REVIEWS;
-  const usingFallback = !data;
 
   if (loading) {
     return (
@@ -59,10 +61,45 @@ export function Reviews() {
     );
   }
 
+  // No live reviews yet: link to real profiles instead of showing sample quotes.
+  if (!data) {
+    return (
+      <div className="mx-auto max-w-xl rounded-xl border border-black/5 bg-white p-8 text-center shadow-sm">
+        <div className="flex justify-center">
+          <Stars rating={5} />
+        </div>
+        <p className="mt-3 text-ink/70">
+          We&apos;re proud of the reputation we&apos;ve built with our neighbors.
+          Read what customers are saying:
+        </p>
+        <div className="mt-5 flex flex-wrap justify-center gap-3">
+          <a
+            href={googleSearchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 font-semibold text-white transition-colors hover:bg-primary/90"
+          >
+            Reviews on Google
+          </a>
+          {BUSINESS.social.facebook && (
+            <a
+              href={BUSINESS.social.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-primary px-5 py-2.5 font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
+            >
+              Find us on Facebook
+            </a>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {reviews.slice(0, 6).map((review, i) => (
+        {data.reviews.slice(0, 6).map((review, i) => (
           <figure
             key={i}
             className="flex flex-col rounded-xl border border-black/5 bg-white p-6 shadow-sm"
@@ -74,20 +111,13 @@ export function Reviews() {
             <figcaption className="mt-4 text-sm font-semibold text-primary">
               {review.author}
               {review.relativeTime && (
-                <span className="font-normal text-ink/50">
-                  {" "}
-                  · {review.relativeTime}
-                </span>
+                <span className="font-normal text-ink/50"> · {review.relativeTime}</span>
               )}
             </figcaption>
           </figure>
         ))}
       </div>
-      <p className="mt-4 text-xs text-ink/50">
-        {usingFallback
-          ? "Sample reviews shown. Connect the Google Places API to display live reviews."
-          : "Reviews from Google."}
-      </p>
+      <p className="mt-4 text-center text-xs text-ink/50">Reviews from Google.</p>
     </div>
   );
 }

@@ -128,27 +128,12 @@ function DropIcon(props: IconProps) {
     </svg>
   );
 }
-function FenceIcon(props: IconProps) {
+function HomeIcon(props: IconProps) {
   return (
     <svg {...base} {...props}>
-      <path d="M5 3 4 6v15h4V6L7 3H5zM17 3l-1 3v15h4V6l-1-3h-2z" />
-      <path d="M4 10h16M4 15h16" />
-    </svg>
-  );
-}
-function TileIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <rect x="3" y="3" width="18" height="18" rx="1" />
-      <path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
-    </svg>
-  );
-}
-function DoorIcon(props: IconProps) {
-  return (
-    <svg {...base} {...props}>
-      <path d="M4 21h16M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17" />
-      <path d="M14 12h.01" />
+      <path d="M3 10.5 12 3l9 7.5" />
+      <path d="M5 9.5V21h14V9.5" />
+      <path d="M9.5 21v-6h5v6" />
     </svg>
   );
 }
@@ -156,12 +141,10 @@ function DoorIcon(props: IconProps) {
 const SERVICE_ICONS: Record<ServiceIconName, (p: IconProps) => React.JSX.Element> = {
   wrench: WrenchIcon,
   hammer: HammerIcon,
+  home: HomeIcon,
   paint: PaintIcon,
   bolt: BoltIcon,
   drop: DropIcon,
-  fence: FenceIcon,
-  tile: TileIcon,
-  door: DoorIcon,
 };
 
 export function ServiceIcon({

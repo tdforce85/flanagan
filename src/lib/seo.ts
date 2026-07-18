@@ -10,12 +10,18 @@ export function localBusinessJsonLd() {
     url: BUSINESS.url,
     telephone: BUSINESS.phoneHref.replace("tel:", ""),
     email: BUSINESS.email,
-    areaServed: BUSINESS.serviceAreas.map((name) => ({
-      "@type": "City",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: BUSINESS.city,
+      addressRegion: BUSINESS.state,
+      addressCountry: "US",
+    },
+    areaServed: BUSINESS.counties.map((name) => ({
+      "@type": "AdministrativeArea",
       name,
     })),
     openingHoursSpecification: BUSINESS.hours
-      .filter((h) => !/closed/i.test(h.time))
+      .filter((h) => !/appointment|closed/i.test(h.time))
       .map((h) => ({
         "@type": "OpeningHoursSpecification",
         dayOfWeek: h.day,
