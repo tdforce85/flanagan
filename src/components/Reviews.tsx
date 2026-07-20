@@ -96,9 +96,34 @@ export function Reviews() {
     );
   }
 
+  // With only a review or two, a 3-col grid looks sparse — center them under a
+  // rating summary instead. Keep the full grid once there's enough to fill it.
+  const few = data.reviews.length <= 2;
+  const summaryRating = data.rating || data.reviews[0]?.rating || 5;
+  const summaryTotal = data.total || data.reviews.length;
+
   return (
     <div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {few && (
+        <div className="mb-6 flex flex-col items-center gap-1 text-center">
+          <div className="flex items-center gap-2">
+            <Stars rating={summaryRating} />
+            <span className="text-sm font-semibold text-ink">
+              {summaryRating.toFixed(1)}
+            </span>
+          </div>
+          <p className="text-xs text-ink/60">
+            {summaryTotal} {summaryTotal === 1 ? "review" : "reviews"} on Google
+          </p>
+        </div>
+      )}
+      <div
+        className={
+          few
+            ? "mx-auto grid max-w-xl gap-6"
+            : "grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        }
+      >
         {data.reviews.slice(0, 6).map((review, i) => (
           <figure
             key={i}
@@ -117,7 +142,21 @@ export function Reviews() {
           </figure>
         ))}
       </div>
-      <p className="mt-4 text-center text-xs text-ink/50">Reviews from Google.</p>
+      {few && (
+        <div className="mt-6 text-center">
+          <a
+            href={googleSearchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
+          >
+            Read our reviews on Google
+          </a>
+        </div>
+      )}
+      {!few && (
+        <p className="mt-4 text-center text-xs text-ink/50">Reviews from Google.</p>
+      )}
     </div>
   );
 }
