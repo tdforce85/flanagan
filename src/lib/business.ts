@@ -32,7 +32,7 @@ export const BUSINESS = {
   phone: "(267) 984-5129",
   phoneHref: "tel:+12679845129",
   email: "flanaganhomeservicesinc@gmail.com",
-  yearsInBusiness: 4,
+  yearsInBusiness: 15,
   licensed: true,
   insured: true,
   city: "Warminster",
